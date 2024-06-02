@@ -1,6 +1,9 @@
 import json
 import requests
 from datetime import date
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import A4
+
 
 link = 'https://teste-dbd-default-rtdb.firebaseio.com/'
 
@@ -32,6 +35,7 @@ while loop !=5:
             'tonus': tonus,
             'intensidade da hipertonia': intensidade
         }
+        pdf = canvas.Canvas(f'{nomePaciente}.pdf', pagesize=A4)
 
         dados = {
             'nome': nomePaciente,
@@ -44,7 +48,16 @@ while loop !=5:
             'endereco': endereco,
             'palpaçaõ': palpacao
         }
+        espacamento = 20
+        for info in dados.keys():
+            #print(f'{info} = {dados[info]}')
+            pdf.drawString(100,650 - espacamento,f'{info} = {dados[info]}')
+            espacamento+= 25
+
+        pdf.save()
+
         requisicao = requests.post(f'{link}/Prontuarios/.json',data=json.dumps(dados))
+
         #Pra saber c deu certo
         print(requisicao)
         print('Cadastrado com sucesso')
